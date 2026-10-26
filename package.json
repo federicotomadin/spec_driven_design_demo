@@ -10,6 +10,7 @@
   "scripts": {
     "harness": "node harness/cli.js",
     "trace": "node harness/cli.js trace",
-    "verify": "node harness/cli.js check"
+    "verify": "node harness/cli.js check",
+    "test": "node --test harness/test/"
   }
 }
