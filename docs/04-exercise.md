@@ -59,7 +59,7 @@ If any `- [ ]` remains, the harness rejects it:
 ```
 
 Answer them: mark them `- [x]` and record the decision in section 9. Then approve again.
-If an agent tries to approve it for you, the Cursor hook asks you for confirmation.
+If an agent tries to approve it for you, the agent hook (Cursor or Claude Code) asks you for confirmation.
 
 ## Step 4 — Plan (planner)
 

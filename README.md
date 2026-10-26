@@ -6,7 +6,7 @@ built for working with AI agents without skipping steps:
 - **Specs as the unit of work**, with a lifecycle (`idea → draft → approved → planned → in_progress → review → done`) and gates a program verifies.
 - **A generic harness** (`harness/`, no dependencies) that works with any stack. Configure it in `harness.config.json`.
 - **Agent roles** (leader, spec-writer, planner, implementer, reviewer) that leave everything in `progress/`.
-- **Cursor hooks** that require human approval and verify state on close.
+- **Cursor and Claude Code hooks** that require human approval and verify state on close.
 
 ## Get started
 
@@ -66,7 +66,8 @@ templates/             spec, plan, and task templates
 specs/                 one folder per spec: spec.md, plan.md, tasks.md  ← source of truth
 progress/              session state, log, and agent reports
 docs/project/          architecture, conventions, verification  ← per project
-.cursor/hooks*         human approval + check on close
+.cursor/hooks*         human approval + check on close (Cursor)
+.claude/               same hooks for Claude Code
 ```
 
 ## The golden rule

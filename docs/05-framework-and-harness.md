@@ -15,7 +15,7 @@ with one central change: **the unit of work is the spec**, not a list of feature
 |--------|------------|----------------|
 | **1. The repo is the system** | All context and state live in versioned files. | `AGENTS.md`, `specs/`, `progress/`, `docs/project/`, `harness.config.json` |
 | **2. Separated roles** | Whoever writes the spec does not approve it; whoever implements does not review themselves. | `harness/agents/*.md` |
-| **3. Executable verification** | A program enforces the rules, not the agent's goodwill. | `harness/cli.js`, `.cursor/hooks.json`, `CHECKPOINTS.md` |
+| **3. Executable verification** | A program enforces the rules, not the agent's goodwill. | `harness/cli.js`, `.cursor/hooks.json`, `.claude/settings.json`, `CHECKPOINTS.md` |
 
 ## The lifecycle of a spec
 
@@ -77,14 +77,21 @@ npm run harness -- check           # full verification (at start and close)
 npm run harness -- trace           # AC ↔ tests traceability only
 ```
 
-## Cursor hooks
+## Agent hooks (Cursor and Claude Code)
 
-`.cursor/hooks.json` makes two rules independent of whether the agent respects them:
+Two hooks make two rules independent of whether the agent respects them.
+Each agent has its own copy, because each one speaks a different hook protocol:
 
-- **`guard-approval.sh`** (`beforeShellExecution`): if an agent runs
-  `harness move <id> approved`, Cursor asks you for confirmation. The approval is yours.
-- **`check-on-stop.sh`** (`stop`): when the agent finishes, it runs `harness check`.
+| Hook | Cursor (`.cursor/hooks.json`) | Claude Code (`.claude/settings.json`) |
+|------|-------------------------------|---------------------------------------|
+| `guard-approval.sh` | `beforeShellExecution` | `PreToolUse` on `Bash` |
+| `check-on-stop.sh` | `stop` | `Stop` |
+
+- **`guard-approval.sh`**: if an agent runs `harness move <id> approved`, the
+  agent asks you for confirmation (in Claude Code, even in auto mode). The approval is yours.
+- **`check-on-stop.sh`**: when the agent finishes, it runs `harness check`.
   If it is red, it returns the errors so the agent can fix them or document the block.
+  It does this once per stop, so an unresolvable block never loops forever.
 
 ## Why the reviewer is needed if everything is green
 
@@ -120,7 +127,8 @@ It works with any stack. It only needs Node ≥ 20 to run the harness.
    harness/                 # CLI + roles (do not touch)
    templates/               # spec, plan, and task templates (adjustable)
    AGENTS.md  CLAUDE.md  CHECKPOINTS.md
-   .cursor/hooks.json  .cursor/hooks/
+   .cursor/hooks.json  .cursor/hooks/      # if you use Cursor
+   .claude/settings.json  .claude/hooks/   # if you use Claude Code
    harness.config.json      # ← adapt
    docs/project/            # ← fill in: architecture, conventions, verification
    progress/current.md  progress/history.md
